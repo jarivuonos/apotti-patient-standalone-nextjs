@@ -30,7 +30,7 @@ This project is a standalone patient-facing application that allows patients to 
 
 1. Clone this repository:
    ```bash
-   git clone https://github.com/yourusername/apotti-patient-standalone.git
+   git clone https://github.com/Oy-Apotti-Ab/apotti-patient-standalone.git
 
 2.  Navigate to the project directory:
 cd apotti-patient-standalone
@@ -41,7 +41,7 @@ npm install
 ## Environment Variables
 Before running the application, ensure you have the following environment variables set in the .env.local file:
 NEXT_PUBLIC_FHIR_SERVER: FHIR server base URL
-NEXT_PUBLIC_FHIR_SERVER_A: FHIR server authorization endpoint
+NEXT_PUBLIC_FHIR_SERVER_A: FHIR server OAuth2 base URL (e.g. https://gw.apottiekosysteemi.fi/Interconnect-EKO01/oauth2)
 NEXT_PUBLIC_CLIENT_ID: Your client ID for OAuth2 authentication
 
 ## Running the Application
