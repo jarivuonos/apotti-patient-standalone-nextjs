@@ -14,7 +14,8 @@ export async function GET(request: NextRequest) {
 
   const tokenEndpoint = process.env.NEXT_PUBLIC_FHIR_SERVER_A;
   const clientId = process.env.NEXT_PUBLIC_CLIENT_ID;
-  const redirectUri = 'http://localhost:3000/api/auth/callback';
+  const origin = request.nextUrl.origin;
+  const redirectUri = `${origin}/api/auth/callback`;
   const state = '1234';
 
   try {
@@ -36,7 +37,7 @@ export async function GET(request: NextRequest) {
 
     const { access_token, patient } = tokenResponse.data;
     return NextResponse.redirect(
-      `http://localhost:3000/patient/${patient}?accessToken=${access_token}`
+      `${origin}/patient/${patient}?accessToken=${access_token}`
     );
 
   } catch (error) {

@@ -21,7 +21,9 @@ export default function HomePage() {
   }, []);
 
   const handleSignIn = () => {
-    const authorizeUrl = `${process.env.NEXT_PUBLIC_FHIR_SERVER_A}/authorize?response_type=code&client_id=${process.env.NEXT_PUBLIC_CLIENT_ID}&redirect_uri=http://localhost:3000/api/auth/callback&scope=openid%20profile%20patient.read`;
+    const origin = typeof window !== 'undefined' ? window.location.origin : 'http://localhost:3000';
+    const redirectUri = encodeURIComponent(`${origin}/api/auth/callback`);
+    const authorizeUrl = `${process.env.NEXT_PUBLIC_FHIR_SERVER_A}/authorize?response_type=code&client_id=${process.env.NEXT_PUBLIC_CLIENT_ID}&redirect_uri=${redirectUri}&scope=openid%20profile%20patient.read`;
     window.location.href = authorizeUrl;
   };
 

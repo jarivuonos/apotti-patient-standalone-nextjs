@@ -1,0 +1,4 @@
+#Wed Aug 12 15:27:35 EEST 2026
+base.0=/home/jari/dev/apotti-patient-standalone-nextjs/app/build/intermediates/dex/release/minifyReleaseWithR8/classes.dex
+renamed.0=classes.dex
+path.0=classes.dex
