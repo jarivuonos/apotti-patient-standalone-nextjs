@@ -14,7 +14,17 @@ export async function GET(request: NextRequest) {
 
   const tokenEndpoint = process.env.NEXT_PUBLIC_FHIR_SERVER_A;
   const clientId = process.env.NEXT_PUBLIC_CLIENT_ID;
-  const origin = request.nextUrl.origin;
+
+  let origin = process.env.NEXT_PUBLIC_APP_URL;
+  if (!origin) {
+    const currentOrigin = request.nextUrl.origin;
+    if (currentOrigin.includes('localhost')) {
+      origin = currentOrigin;
+    } else {
+      origin = 'https://apotti-patient-standalone-nextjs.vercel.app';
+    }
+  }
+
   const redirectUri = `${origin}/api/auth/callback`;
   const state = '1234';
 
