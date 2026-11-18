@@ -4,10 +4,11 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useRouter } from 'next/navigation';
 import '../../styles/PatientPage.css'; // Import the CSS file.
+import { formatDate, observationCode, observationDate, observationValue, patientAddress, patientName } from '../../../lib/fhir-display';
 
 const PatientPage = ({ params }: { params: { patientId: string } }) => {
   const [patientData, setPatientData] = useState<any>(null);
-  const [observations, setObservations] = useState([]); // Initialize as empty array
+  const [observations, setObservations] = useState<any[]>([]); // Initialize as empty array
   const [loading, setLoading] = useState(true);
   const router = useRouter();
 
@@ -40,12 +41,12 @@ const PatientPage = ({ params }: { params: { patientId: string } }) => {
         });
 
         // Sort observations by effectiveDateTime in descending order
-        const sortedObservations = observationResponse.data.entry.sort((a: any, b: any) => {
-          return new Date(b.resource.effectiveDateTime).getTime() - new Date(a.resource.effectiveDateTime).getTime();
-        });
+        const time = (e: any) => new Date(observationDate(e.resource) ?? 0).getTime() || 0;
+        const sortedObservations = [...(observationResponse.data.entry ?? [])]
+          .filter((e: any) => e.resource?.resourceType === 'Observation')
+          .sort((a: any, b: any) => time(b) - time(a));
 
         setObservations(sortedObservations);
-        console.log('>>>Sorted Observations:', sortedObservations);
       } catch (error) {
         console.error('Error fetching data:', error);
       } finally {
@@ -72,7 +73,7 @@ const PatientPage = ({ params }: { params: { patientId: string } }) => {
             <tbody>
               <tr>
                 <td><strong>Name:</strong></td>
-                <td>{patientData.name?.[0]?.text || 'N/A'}</td>
+                <td>{patientName(patientData)}</td>
               </tr>
               <tr>
                 <td><strong>ID:</strong></td>
@@ -84,7 +85,7 @@ const PatientPage = ({ params }: { params: { patientId: string } }) => {
               </tr>
               <tr>
                 <td><strong>Address:</strong></td>
-                <td>{patientData.address?.[0]?.text || 'N/A'}</td>
+                <td>{patientAddress(patientData)}</td>
               </tr>
             </tbody>
           </table>
@@ -107,14 +108,17 @@ const PatientPage = ({ params }: { params: { patientId: string } }) => {
               </tr>
             </thead>
             <tbody>
-              {observations.map((observation: any, index: number) => (
-                <tr key={index}>
-                  <td>{observation.resource.code?.text || 'N/A'}</td>
-                  <td>{observation.resource.valueQuantity?.value || 'N/A'}</td>
-                  <td>{observation.resource.valueQuantity?.unit || 'N/A'}</td>
-                  <td>{new Date(observation.resource.effectiveDateTime).toLocaleString() || 'N/A'}</td>
-                </tr>
-              ))}
+              {observations.map((observation: any, index: number) => {
+                const { value, unit } = observationValue(observation.resource);
+                return (
+                  <tr key={observation.resource.id ?? index}>
+                    <td>{observationCode(observation.resource)}</td>
+                    <td>{value}</td>
+                    <td>{unit || 'N/A'}</td>
+                    <td>{formatDate(observationDate(observation.resource))}</td>
+                  </tr>
+                );
+              })}
             </tbody>
           </table>
         </div>
